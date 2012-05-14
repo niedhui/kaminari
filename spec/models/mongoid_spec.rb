@@ -26,7 +26,7 @@ describe Kaminari::MongoidExtension do
   end
 
   describe '#page' do
-    
+
     context 'page 1' do
       subject { MongoidExtensionDeveloper.page 1 }
       it { should be_a Mongoid::Criteria }
@@ -143,4 +143,16 @@ describe Kaminari::MongoidExtension do
       its(:current_page_count) { should == 2 }
     end
   end
+
+  describe "#fill_total_count" do
+    context 'page 1' do
+      subject { MongoidExtensionDeveloper.page(1).per(15).fill_total_count(34) }
+      it { should be_a Mongoid::Criteria }
+      its(:total_count) { should == 34 }
+      its(:limit_value) { should == 15 }
+      its(:num_pages) { should == 3 }
+      its(:current_page_count) { should == 15 }
+    end
+  end
+
 end

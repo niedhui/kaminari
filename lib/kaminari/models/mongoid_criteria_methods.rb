@@ -1,5 +1,10 @@
 module Kaminari
   module MongoidCriteriaMethods
+
+    def fill_total_count(value)
+      self.tap { @filled_total_count = value }
+    end
+
     def limit_value #:nodoc:
       options[:limit]
     end
@@ -9,9 +14,13 @@ module Kaminari
     end
 
     def total_count #:nodoc:
-      embedded? ? unpage.count : count
+      if @filled_total_count
+        @filled_total_count
+      else
+        embedded? ? unpage.count : count
+      end
     end
-    
+
     def current_page_count #:nodoc:
       # TODO: this needs a better fix, count comes from Mongoid::Context::Mongo or Enumerable which have different signatures
       begin
@@ -20,7 +29,7 @@ module Kaminari
         count
       end
     end
-    
+
     private
     def unpage
       clone.tap do |crit|
